@@ -6,48 +6,40 @@ public class ClosestBall {
     public int computeClosest(ArrayList<Integer> players, ArrayList<Integer> balls) {
         // Implement your code here to return the shortest distance between two numbers!
         Collections.sort(players);
-        Collections.sort(balls);
+        //Collections.sort(balls);
+        int smallestSoFar = Math.abs(balls.get(0) - players.get(0));
 
-        int smallestSoFar = Math.abs(players.get(0)-balls.get(0));
-        if (players.size() == 1 || balls.size() == 1) {
-            if (players.size() ==1) {
-                for (int m = 0; m<balls.size(); m++) {
-                    if(Math.abs(players.get(0) - balls.get(m)) < smallestSoFar) {
-                        smallestSoFar = Math.abs(players.get(0) - balls.get(m));
-                    }
+        for (Integer currentBall : balls) {
+            int bestPlayerIndex = Collections.binarySearch(players, currentBall);
+
+            if (bestPlayerIndex < 0) {
+                bestPlayerIndex = Math.abs(bestPlayerIndex)-1; //index 
+
+                if (bestPlayerIndex >= players.size()) {
+                    bestPlayerIndex = players.size()-1;
                 }
-            }
-            else {
-                for (int n = 0; n<players.size(); n++) {
-                    if(Math.abs(players.get(n) - balls.get(0)) < smallestSoFar) {
-                        smallestSoFar = Math.abs(players.get(n) - balls.get(0));
-                    }
-                }
-            }
-        }
-        else {
-            for (int m = 0; m < balls.size(); m++){
-
-                int index = Collections.binarySearch(players, balls.get(m));
-                if (index < 0) {
-                    index = Math.abs(index + 1);
-
-                    if (players.get(index)-balls.get(m) > players.get(index-1)-balls.get(m)){
-                        index = index-1;
-                    }
-
-                    if(Math.abs(players.get(index) - balls.get(m)) < smallestSoFar) {
-                        smallestSoFar = Math.abs(players.get(index) - balls.get(m));
-                    }
-
+                else if (bestPlayerIndex <= 0) {
+                    bestPlayerIndex = 0;
                 }
                 else {
-                    return 0;
+                    if(Math.abs(currentBall - players.get(bestPlayerIndex)) > Math.abs(currentBall - players.get(bestPlayerIndex-1))) {
+                        bestPlayerIndex = bestPlayerIndex-1;
+                    }
+                }
+
+                //updates bestDistance
+                int currentDistance = Math.abs(currentBall - players.get(bestPlayerIndex));
+                if (currentDistance < smallestSoFar) {
+                    smallestSoFar = currentDistance;
                 }
 
             }
+            else {
+                return 0; //there is a ball and a player at same position, distance is 0!
+            }
 
         }
+
         return smallestSoFar;
     }
 
